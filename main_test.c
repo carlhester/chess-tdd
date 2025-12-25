@@ -1,4 +1,11 @@
 #include "main.h"
+#include "test_assert.h"
+#include "test_bishop.h"
+#include "test_king.h"
+#include "test_knight.h"
+#include "test_pawn.h"
+#include "test_queen.h"
+#include "test_rook.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,39 +13,6 @@
 
 int tests_run = 0;
 int tests_passed = 0;
-
-#define ASSERT(test, message)                                                                      \
-    do {                                                                                           \
-        tests_run++;                                                                               \
-        if (!(test)) {                                                                             \
-            printf("FAIL: %s\n", message);                                                         \
-            return 0;                                                                              \
-        } else {                                                                                   \
-            tests_passed++;                                                                        \
-        }                                                                                          \
-    } while (0)
-
-static bool pieces_match(Piece *p1, Piece *p2) {
-    // printf("%d %d", p1->color, p2->color);
-    // printf("%d %d", p1->unittype, p2->unittype);
-    if (p1 == NULL) {
-        return false;
-    };
-
-    if (p2 == NULL) {
-        return false;
-    };
-
-    if (p1->color != p2->color) {
-        return false;
-    }
-
-    if (p1->unittype != p2->unittype) {
-        return false;
-    }
-
-    return true;
-};
 
 static int test_add() {
     int result = add(2, 6);
@@ -158,63 +132,6 @@ static int test_can_add_a_BLACK_QUEEN_to_5_0() {
     Piece *got = get_piece_at(&g, loc);
     Piece expected = { .color = c, .unittype = t };
     ASSERT(pieces_match(got, &expected), "Expected BLACK QUEEN");
-    return 0;
-};
-
-static int test_can_move_a_pawn_forward_two_squares_on_first_turn() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, PAWN, loc);
-    Location targetloc = { 0, 2, true };
-    int success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "Expected piece to land at 0,2");
-    return 0;
-};
-
-static int test_can_move_a_pawn_forward_one_square() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, PAWN, loc);
-    Location targetloc = { 0, 1, true };
-    move_piece(&g, a, targetloc);
-    Piece *got = get_piece_at(&g, targetloc);
-    ASSERT(pieces_match(a, got), "Expected piece to be at 0,1");
-    return 0;
-};
-
-static int test_can_move_a_pawn_backward_one_square() {
-    Game g = create_game();
-    Location loc = { 0, 1, true };
-    Piece *a = create_piece_at(&g, WHITE, PAWN, loc);
-    Location targetloc = { 0, 0, true };
-    move_piece(&g, a, targetloc);
-
-    Piece *got = get_piece_at(&g, targetloc);
-    ASSERT(pieces_match(a, got), "Expected piece to be at 0,0 after moving from 0,1");
-    return 0;
-};
-
-static int test_cannot_move_a_pawn_forward_two_squares_after_first_turn() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, PAWN, loc);
-    Location first_move_loc = { 0, 1, true };
-    move_piece(&g, a, first_move_loc);
-    Location second_move_loc = { 0, 3, true };
-
-    int success = move_piece(&g, a, second_move_loc);
-
-    ASSERT(success == false, "A pawn moving 2 squares after first move is not allowed");
-    return 0;
-};
-
-static int test_cannot_move_a_pawn_horizontally_two_squares() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, PAWN, loc);
-    Location targetloc = { 2, 0, true };
-    int success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "Expected piece to remain at 0,0");
     return 0;
 };
 
@@ -427,337 +344,6 @@ static int test_cannot_move_a_piece_outside_of_board_height_less_than_zero() {
     ASSERT(success == false, "Should not success when moving outside boundaries");
     return 0;
 };
-static int test_can_move_a_knight_forward_two_and_right_one() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 1, 2, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "should be able to move a knight forward two and right one");
-    return 0;
-};
-
-static int test_can_move_a_knight_forward_one_and_right_two() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 2, 1, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "should be able to move a knight forward one and right two");
-    return 0;
-};
-static int test_can_move_a_knight_forward_two_and_left_one() {
-    Game g = create_game();
-    Location loc = { 2, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 1, 2, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "should be able to move a knight forward two and left one");
-    return 0;
-};
-static int test_can_move_a_knight_forward_one_and_left_two() {
-    Game g = create_game();
-    Location loc = { 2, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 0, 1, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "should be able to move a knight forward one and left two");
-    return 0;
-};
-
-static int test_can_move_a_knight_backward_one_and_right_one() {
-    Game g = create_game();
-    Location loc = { 0, 2, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 1, 0, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "should be able to move a knight -2x1");
-    return 0;
-};
-
-static int test_can_move_a_knight_backward_two_and_left_one() {
-    Game g = create_game();
-    Location loc = { 1, 2, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 0, 0, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "should be able to move a knight -2x-1");
-    return 0;
-};
-
-static int test_can_move_a_knight_backward_one_and_right_two() {
-    Game g = create_game();
-    Location loc = { 0, 1, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 2, 0, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "should be able to move a knight -1x2");
-    return 0;
-};
-
-static int test_can_move_a_knight_backward_one_and_left_two() {
-    Game g = create_game();
-    Location loc = { 2, 2, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 0, 1, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "should be able to move a knight x-2 y-1");
-    return 0;
-};
-
-static int test_cannot_move_a_knight_more_than_two_vertically() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 0, 3, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "knight should not be able to move 3 forward");
-    return 0;
-};
-
-static int test_cannot_move_a_knight_more_than_two_horizontally() {
-    Game g = create_game();
-    Location loc = { 3, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 0, 0, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "knight should not be able to move 3 left");
-    return 0;
-};
-
-static int test_cannot_move_a_knight_two_vert_and_two_horizontally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
-
-    Location targetloc = { 2, 2, true };
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "knight cannot move 2x2");
-    return 0;
-};
-
-static int test_can_move_a_rook_vertically_multiple_spaces() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, ROOK, loc);
-
-    Location targetloc = { 0, 7, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "rook can move x0 y7");
-    return 0;
-};
-
-static int test_can_move_a_rook_horizontally_multiple_spaces() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, ROOK, loc);
-
-    Location targetloc = { 5, 0, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "rook can move x5 y0");
-    return 0;
-};
-
-static int test_cannot_move_a_rook_diagonally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, ROOK, loc);
-
-    Location targetloc = { 5, 5, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "rook cannot move diagonally 5x5");
-    return 0;
-};
-
-static int test_can_move_a_bishop_diagonally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, BISHOP, loc);
-
-    Location targetloc = { 4, 4, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "bishop can move diagonally");
-    return 0;
-};
-
-static int test_cannot_move_a_bishop_vertically() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, BISHOP, loc);
-
-    Location targetloc = { 5, 0, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "bishop cannot move vertically");
-    return 0;
-};
-
-static int test_cannot_move_a_bishop_horizontally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, BISHOP, loc);
-
-    Location targetloc = { 0, 5, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "bishop cannot move horizontally");
-    return 0;
-};
-
-static int test_can_move_a_queen_vertically() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, QUEEN, loc);
-
-    Location targetloc = { 0, 5, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "queen can move vertically");
-    return 0;
-};
-
-static int test_can_move_a_queen_horizontally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, QUEEN, loc);
-
-    Location targetloc = { 5, 0, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "queen can move horizontally");
-    return 0;
-};
-
-static int test_can_move_a_queen_diagonally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, QUEEN, loc);
-
-    Location targetloc = { 4, 4, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "queen can move diagonally");
-    return 0;
-
-    return 0;
-};
-
-static int test_cannot_move_a_queen_2x4() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, QUEEN, loc);
-
-    Location targetloc = { 2, 4, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "queen cannot move 2x4");
-
-    return 0;
-};
-
-static int test_cannot_move_a_queen_4x6() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, QUEEN, loc);
-
-    Location targetloc = { 4, 6, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "queen cannot move 4x6");
-
-    return 0;
-};
-
-static int test_can_move_a_king_by_one_vertically() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KING, loc);
-
-    Location targetloc = { 0, 1, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "king can move vertically");
-    return 0;
-};
-
-static int test_can_move_a_king_by_one_horizontally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KING, loc);
-
-    Location targetloc = { 1, 0, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "king can move horizontally");
-    return 0;
-};
-
-static int test_can_move_a_king_diagonally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, QUEEN, loc);
-
-    Location targetloc = { 1, 1, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == true, "king can move diagonally");
-    return 0;
-
-    return 0;
-};
-
-static int test_cannot_move_a_king_more_than_1_space_horizontally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KING, loc);
-
-    Location targetloc = { 2, 0, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "king cannot move >1 horizontally");
-
-    return 0;
-};
-
-static int test_cannot_move_a_king_more_than_1_space_vertically() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KING, loc);
-
-    Location targetloc = { 0, 3, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "king cannot move >1 vertically");
-
-    return 0;
-};
-
-static int test_cannot_move_a_king_more_than_1_space_diagonally() {
-    Game g = create_game();
-    Location loc = { 0, 0, true };
-    Piece *a = create_piece_at(&g, WHITE, KING, loc);
-
-    Location targetloc = { 3, 3, true };
-
-    bool success = move_piece(&g, a, targetloc);
-    ASSERT(success == false, "king cannot move >1 diagonally");
-
-    return 0;
-};
 
 // ====== RULE CHECKS =====
 static int test_white_player_goes_first() {
@@ -805,9 +391,19 @@ static int test_white_turn_after_black_turn() {
 };
 
 static int test_attacking_other_color_captures_piece() {
+    Game g = create_game();
+    Location wloc = { 0, 0, true };
+    Piece *w = create_piece_at(&g, WHITE, QUEEN, wloc);
 
+    Location bloc = { 1, 1, true };
+    create_piece_at(&g, BLACK, QUEEN, bloc);
+
+    move_piece(&g, w, bloc);
+
+    Piece *result = get_piece_at(&g, bloc);
+    ASSERT(result == w, "the result should be the white piece at location bloc");
     return 0;
-}
+};
 
 // Run all tests
 static void run_all_tests() {
@@ -839,59 +435,29 @@ static void run_all_tests() {
     test_black_cannot_move_white_piece();
     test_white_can_move_white_piece();
     test_black_can_move_black_piece();
-
     test_player_move();
-
-    // PAWN MOVEMENT
-    test_can_move_a_pawn_forward_one_square();
-    test_can_move_a_pawn_backward_one_square();
-    test_can_move_a_pawn_forward_two_squares_on_first_turn();
-    test_cannot_move_a_pawn_forward_two_squares_after_first_turn();
-    test_cannot_move_a_pawn_horizontally_two_squares();
-
     test_cannot_move_a_piece_outside_of_board_width();
     test_cannot_move_a_piece_outside_of_board_width_less_than_zero();
     test_cannot_move_a_piece_outside_of_board_height();
     test_cannot_move_a_piece_outside_of_board_height_less_than_zero();
 
-    // KNIGHT MOVEMENT
-    test_can_move_a_knight_forward_two_and_right_one();
-    test_can_move_a_knight_forward_two_and_left_one();
-    test_can_move_a_knight_forward_one_and_right_two();
-    test_can_move_a_knight_forward_one_and_left_two();
-    test_can_move_a_knight_backward_one_and_right_one();
-    test_can_move_a_knight_backward_two_and_left_one();
-    test_can_move_a_knight_backward_one_and_right_two();
-    test_can_move_a_knight_backward_one_and_left_two();
+    // PAWN MOVEMENT
+    test_pawn_movement();
 
-    test_cannot_move_a_knight_more_than_two_vertically();
-    test_cannot_move_a_knight_more_than_two_horizontally();
-    test_cannot_move_a_knight_two_vert_and_two_horizontally();
+    // KNIGHT MOVEMENT
+    test_knight_movement();
 
     // ROOK MOVEMENT
-    test_can_move_a_rook_vertically_multiple_spaces();
-    test_can_move_a_rook_horizontally_multiple_spaces();
-    test_cannot_move_a_rook_diagonally();
+    test_rook_movement();
 
     // BISHOP MOVEMENT
-    test_can_move_a_bishop_diagonally();
-    test_cannot_move_a_bishop_vertically();
-    test_cannot_move_a_bishop_horizontally();
+    test_bishop_movement();
 
     // QUEEN MOVEMENT
-    test_can_move_a_queen_vertically();
-    test_can_move_a_queen_horizontally();
-    test_can_move_a_queen_diagonally();
-    test_cannot_move_a_queen_2x4();
-    test_cannot_move_a_queen_4x6();
+    test_queen_movement();
 
     // KING MOVEMENT
-    test_can_move_a_king_by_one_vertically();
-    test_can_move_a_king_by_one_horizontally();
-    test_can_move_a_king_diagonally();
-    test_cannot_move_a_king_more_than_1_space_horizontally();
-    test_cannot_move_a_king_more_than_1_space_vertically();
-    test_cannot_move_a_king_more_than_1_space_diagonally();
+    test_king_movement();
 
     // ====== RULE CHECKS =====
     test_white_player_goes_first();

@@ -178,54 +178,194 @@ bool target_is_on_board(Location dest) {
     return true;
 };
 
-bool is_valid_move(Piece *p, Location src, Location target) {
-    if (src.x == target.x) {
-        if (src.y == target.y) {
+bool is_sliding_vertically_valid(Game *g, Location src, Location dest) {
+    if (src.y > dest.y) {
+        for (int i = src.y - 1; i > dest.y + 1; i--) {
+            Location l = { src.x, i, true };
+            Piece *b = get_piece_at(g, l);
+            if (b) {
+                return false;
+            }
+        }
+    }
+
+    if (src.y < dest.y) {
+        for (int i = src.y + 1; i < dest.y - 1; i++) {
+            Location l = { src.x, i, true };
+            Piece *b = get_piece_at(g, l);
+            if (b) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+};
+
+bool is_sliding_horizontally_valid(Game *g, Location src, Location dest) {
+    if (src.x > dest.x) {
+        for (int i = src.x - 1; i > dest.x + 1; i--) {
+            Location l = { i, src.y, true };
+            Piece *b = get_piece_at(g, l);
+            if (b) {
+                return false;
+            }
+        }
+    }
+
+    if (src.x < dest.x) {
+        for (int i = src.x + 1; i < dest.x - 1; i++) {
+            Location l = { i, src.y, true };
+            Piece *b = get_piece_at(g, l);
+            if (b) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+};
+
+bool is_sliding_diagonally_valid(Game *g, Location src, Location dest) {
+    if (src.x > dest.x) {
+        if (src.y > dest.y) {
+            for (int i = src.x - 1; i > dest.x + 1; i--) {
+                for (int ii = src.y - 1; ii > dest.y + 1; ii--) {
+                    Location l = { i, ii, true };
+                    Piece *b = get_piece_at(g, l);
+                    if (b) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    if (src.x > dest.x) {
+        if (src.y < dest.y) {
+            for (int i = src.x - 1; i > dest.x + 1; i--) {
+                for (int ii = src.y + 1; ii < dest.y - 1; ii++) {
+                    Location l = { i, ii, true };
+                    Piece *b = get_piece_at(g, l);
+                    if (b) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    if (src.x < dest.x) {
+        if (src.y < dest.y) {
+            for (int i = src.x + 1; i < dest.x - 1; i++) {
+                for (int ii = src.y + 1; ii < dest.y - 1; ii++) {
+                    Location l = { i, ii, true };
+                    Piece *b = get_piece_at(g, l);
+                    if (b) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    if (src.x > dest.x) {
+        if (src.y > dest.y) {
+            for (int i = src.x - 1; i > dest.x + 1; i--) {
+                for (int ii = src.y - 1; ii > dest.y + 1; ii--) {
+                    Location l = { i, ii, true };
+                    Piece *b = get_piece_at(g, l);
+                    if (b) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+};
+
+bool is_sliding_valid(Game *g, Location src, Location dest) {
+    if (src.x == dest.x) {
+        return is_sliding_vertically_valid(g, src, dest);
+    };
+
+    if (src.y == dest.y) {
+        return is_sliding_horizontally_valid(g, src, dest);
+    };
+
+    return is_sliding_diagonally_valid(g, src, dest);
+};
+
+bool is_valid_move(Game *g, Piece *p, Location src, Location dest) {
+    if (src.x == dest.x) {
+        if (src.y == dest.y) {
             return false;
         };
     };
 
-    if (!target_is_on_board(target)) {
+    if (!target_is_on_board(dest)) {
         return false;
     }
 
     if (p->unittype == PAWN) {
-        bool v = is_valid_pawn_move(p, src.x, src.y, target.x, target.y);
+        bool v = is_valid_pawn_move(p, src.x, src.y, dest.x, dest.y);
         if (v != true) {
             return false;
         };
     };
 
     if (p->unittype == KNIGHT) {
-        bool v = is_valid_knight_move(src.x, src.y, target.x, target.y);
+        bool v = is_valid_knight_move(src.x, src.y, dest.x, dest.y);
         if (v != true) {
             return false;
         };
     };
 
     if (p->unittype == ROOK) {
-        bool v = is_valid_rook_move(src.x, src.y, target.x, target.y);
-        if (v != true) {
+        bool v = is_valid_rook_move(src.x, src.y, dest.x, dest.y);
+        if (!v) {
             return false;
         };
+
+        bool s = is_sliding_vertically_valid(g, src, dest);
+        if (!s) {
+            return false;
+        };
+
+        bool h = is_sliding_horizontally_valid(g, src, dest);
+        if (!h) {
+            return false;
+        };
+
+        return true;
     };
 
     if (p->unittype == BISHOP) {
-        bool v = is_valid_bishop_move(src.x, src.y, target.x, target.y);
+        bool v = is_valid_bishop_move(src.x, src.y, dest.x, dest.y);
         if (v != true) {
+            return false;
+        };
+        bool s = is_sliding_diagonally_valid(g, src, dest);
+        if (!s) {
             return false;
         };
     };
 
     if (p->unittype == QUEEN) {
-        bool v = is_valid_queen_move(src.x, src.y, target.x, target.y);
+        bool v = is_valid_queen_move(src.x, src.y, dest.x, dest.y);
         if (v != true) {
+            return false;
+        };
+        bool s = is_sliding_valid(g, src, dest);
+        if (!s) {
             return false;
         };
     };
 
     if (p->unittype == KING) {
-        bool v = is_valid_king_move(src.x, src.y, target.x, target.y);
+        bool v = is_valid_king_move(src.x, src.y, dest.x, dest.y);
         if (v != true) {
             return false;
         };
@@ -239,13 +379,13 @@ bool move_piece(Game *g, Piece *p, Location target) {
     if (src.valid == false) {
         return false;
     };
-    UnitColor current_player_color = get_active_player(g);
 
+    UnitColor current_player_color = get_active_player(g);
     if (p->color != current_player_color) {
         return false;
     };
 
-    bool valid_move = is_valid_move(p, src, target);
+    bool valid_move = is_valid_move(g, p, src, target);
     if (!valid_move) {
         return false;
     };
