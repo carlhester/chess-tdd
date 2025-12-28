@@ -213,6 +213,13 @@ bool is_valid_king_move(Game *g, int sx, int sy, int dx, int dy) {
                     return false;
                 }
             }
+            if (p->unittype == QUEEN) {
+                Location l = { 0 };
+                get_location_for_piece(g, p, &l);
+                if (is_valid_queen_move(l.x, l.y, dx, dy)) {
+                    return false;
+                }
+            }
         }
     }
 
