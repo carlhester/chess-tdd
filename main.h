@@ -5,7 +5,7 @@
 #define BOARD_WIDTH 8
 #define BOARD_HEIGHT 8
 
-typedef struct {
+    typedef struct {
     int x;
     int y;
     bool valid;
