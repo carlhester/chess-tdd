@@ -157,22 +157,21 @@ static int test_king_cannot_move_into_knight_check() {
     return 0;
 };
 
-// TODO
-// static int test_king_cannot_move_into_king_check() {
-//
-//     Game g = create_game();
-//     Location loc = { 0, 0, true };
-//     Piece *a = create_piece_at(&g, WHITE, KING, loc);
-//
-//     Location rookloc = { 2, 2, true };
-//     create_piece_at(&g, BLACK, KING, rookloc);
-//
-//     Location targetloc = { 1, 1, true };
-//     bool success = move_piece(&g, a, targetloc);
-//     ASSERT(success == false, "king cannot into check by a king");
-//
-//     return 0;
-// };
+static int test_king_cannot_move_into_king_check() {
+
+    Game g = create_game();
+    Location loc = { 0, 0, true };
+    Piece *a = create_piece_at(&g, WHITE, KING, loc);
+
+    Location rookloc = { 2, 2, true };
+    create_piece_at(&g, BLACK, KING, rookloc);
+
+    Location targetloc = { 1, 1, true };
+    bool success = move_piece(&g, a, targetloc);
+    ASSERT(success == false, "king cannot into check by a king");
+
+    return 0;
+};
 static int test_king_movement() {
     test_can_move_a_king_by_one_vertically();
     test_can_move_a_king_by_one_horizontally();
@@ -185,7 +184,6 @@ static int test_king_movement() {
     test_king_cannot_move_into_queen_check();
     test_king_cannot_move_into_pawn_check();
     test_king_cannot_move_into_knight_check();
-    // TODO
-    // test_king_cannot_move_into_king_check();
+    test_king_cannot_move_into_king_check();
     return 0;
 };

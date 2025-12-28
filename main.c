@@ -184,8 +184,7 @@ bool is_valid_queen_move(int sx, int sy, int dx, int dy) {
     return true;
 };
 
-
-bool did_king_move_into_check(Game *g, int dx, int dy){ 
+bool did_king_move_into_check(Game *g, int dx, int dy) {
     for (int i = 0; i < MAX_UNITS; i++) {
         Piece *p = &g->pieces[i];
 
@@ -225,14 +224,18 @@ bool did_king_move_into_check(Game *g, int dx, int dy){
                     return true;
                 }
             }
-            // TODO: cannot call this funciton recursively
-            // if (p->unittype == KING) {
-            //     Location l = { 0 };
-            //     get_location_for_piece(g, p, &l);
-            //     if (is_valid_knight_move(l.x, l.y, dx, dy)) {
-            //         return false;
-            //     }
-            // }
+            if (p->unittype == KING) {
+                Location l = { 0 };
+                get_location_for_piece(g, p, &l);
+                int abs_x = abs(l.x - dx);
+                int abs_y = abs(l.y - dy);
+
+                if (abs_x <= 1) {
+                    if (abs_y <= 1) {
+                        return true;
+                    };
+                }
+            }
         }
     }
 
@@ -249,8 +252,8 @@ bool is_valid_king_move(Game *g, int sx, int sy, int dx, int dy) {
     if (abs_y > 1) {
         return false;
     };
-    if (did_king_move_into_check(g, dx, dy)) { 
-        return false ;
+    if (did_king_move_into_check(g, dx, dy)) {
+        return false;
     }
     return true;
 };
