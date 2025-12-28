@@ -184,17 +184,8 @@ bool is_valid_queen_move(int sx, int sy, int dx, int dy) {
     return true;
 };
 
-bool is_valid_king_move(Game *g, int sx, int sy, int dx, int dy) {
-    int abs_x = abs(sx - dx);
-    int abs_y = abs(sy - dy);
 
-    if (abs_x > 1) {
-        return false;
-    }
-    if (abs_y > 1) {
-        return false;
-    };
-
+bool did_king_move_into_check(Game *g, int dx, int dy){ 
     for (int i = 0; i < MAX_UNITS; i++) {
         Piece *p = &g->pieces[i];
 
@@ -203,35 +194,35 @@ bool is_valid_king_move(Game *g, int sx, int sy, int dx, int dy) {
                 Location l = { 0 };
                 get_location_for_piece(g, p, &l);
                 if (is_valid_rook_move(l.x, l.y, dx, dy)) {
-                    return false;
+                    return true;
                 }
             }
             if (p->unittype == BISHOP) {
                 Location l = { 0 };
                 get_location_for_piece(g, p, &l);
                 if (is_valid_bishop_move(l.x, l.y, dx, dy)) {
-                    return false;
+                    return true;
                 }
             }
             if (p->unittype == QUEEN) {
                 Location l = { 0 };
                 get_location_for_piece(g, p, &l);
                 if (is_valid_queen_move(l.x, l.y, dx, dy)) {
-                    return false;
+                    return true;
                 }
             }
             if (p->unittype == PAWN) {
                 Location l = { 0 };
                 get_location_for_piece(g, p, &l);
                 if (is_valid_pawn_move(g, p, l.x, l.y, dx, dy)) {
-                    return false;
+                    return true;
                 }
             }
             if (p->unittype == KNIGHT) {
                 Location l = { 0 };
                 get_location_for_piece(g, p, &l);
                 if (is_valid_knight_move(l.x, l.y, dx, dy)) {
-                    return false;
+                    return true;
                 }
             }
             // TODO: cannot call this funciton recursively
@@ -245,6 +236,22 @@ bool is_valid_king_move(Game *g, int sx, int sy, int dx, int dy) {
         }
     }
 
+    return false;
+};
+
+bool is_valid_king_move(Game *g, int sx, int sy, int dx, int dy) {
+    int abs_x = abs(sx - dx);
+    int abs_y = abs(sy - dy);
+
+    if (abs_x > 1) {
+        return false;
+    }
+    if (abs_y > 1) {
+        return false;
+    };
+    if (did_king_move_into_check(g, dx, dy)) { 
+        return false ;
+    }
     return true;
 };
 

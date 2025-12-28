@@ -157,6 +157,7 @@ static int test_king_cannot_move_into_knight_check() {
     return 0;
 };
 
+// TODO
 // static int test_king_cannot_move_into_king_check() {
 //
 //     Game g = create_game();
@@ -184,7 +185,7 @@ static int test_king_movement() {
     test_king_cannot_move_into_queen_check();
     test_king_cannot_move_into_pawn_check();
     test_king_cannot_move_into_knight_check();
-    // TODO 
-// test_king_cannot_move_into_king_check();
+    // TODO
+    // test_king_cannot_move_into_king_check();
     return 0;
 };
