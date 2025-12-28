@@ -403,10 +403,9 @@ static int test_attacking_other_color_captures_piece() {
     ASSERT(result == w, "the result should be the white piece at location bloc");
     return 0;
 };
-static int test_on_game_start_white_player_can_enter_a_move() { 
+static int test_on_game_start_white_player_can_enter_a_move() {
 
-
-
+    return 0;
 };
 
 // Run all tests
@@ -458,7 +457,7 @@ static void run_all_tests() {
     test_black_turn_is_after_white_turn();
     test_white_turn_after_black_turn();
     test_attacking_other_color_captures_piece();
-    
+
     // ===== GAMEPLAY =====
     test_on_game_start_white_player_can_enter_a_move();
 
