@@ -19,7 +19,10 @@ coverage: main_test.c main.c main.h
 	./main_test
 	gcov main.c
 
+check-warnings:
+	$(CC) $(CFLAGS) -Werror -DTESTING -fsyntax-only main_test.c main.c
+
 clean:
 	rm -f main_test app *.gcda *.gcno *.gcov
 
-.PHONY: all test clean coverage
+.PHONY: all test clean coverage check-warnings
