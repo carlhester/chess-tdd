@@ -227,11 +227,10 @@ bool did_king_move_into_check(Game *g, int dx, int dy) {
             if (p->unittype == KING) {
                 Location l = { 0 };
                 get_location_for_piece(g, p, &l);
-                int abs_x = abs(l.x - dx);
-                int abs_y = abs(l.y - dy);
 
-                if (abs_x <= 1) {
-                    if (abs_y <= 1) {
+                // Ensure the opposing king only needs to move 1 space in any direction
+                if (abs(l.x - dx) <= 1) {
+                    if (abs(l.y - dy) <= 1) {
                         return true;
                     };
                 }
