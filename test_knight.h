@@ -1,4 +1,5 @@
 #include "main.h"
+#include "test_assert.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -125,6 +126,20 @@ static int test_cannot_move_a_knight_two_vert_and_two_horizontally() {
     return 0;
 };
 
+static int test_knight_can_jump_over_pieces() {
+    Game g = create_game();
+    Location loc = { 0, 0, true };
+    Piece *a = create_piece_at(&g, WHITE, KNIGHT, loc);
+
+    Location loc2 = { 0, 1, true };
+    create_piece_at(&g, WHITE, PAWN, loc2);
+
+    Location targetloc = { 1, 2, true };
+    bool success = move_piece(&g, a, targetloc);
+    ASSERT(success == true, "knight can jump over a piece");
+    return 0;
+};
+
 static int test_knight_movement() {
     test_can_move_a_knight_forward_two_and_right_one();
     test_can_move_a_knight_forward_two_and_left_one();
@@ -137,5 +152,6 @@ static int test_knight_movement() {
     test_cannot_move_a_knight_more_than_two_vertically();
     test_cannot_move_a_knight_more_than_two_horizontally();
     test_cannot_move_a_knight_two_vert_and_two_horizontally();
+    test_knight_can_jump_over_pieces();
     return 0;
 };

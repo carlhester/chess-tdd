@@ -9,8 +9,16 @@ int add(int a, int b) {
     return a + b;
 };
 
+void empty_pieces(Game *g) {
+    for (int i = 0; i < MAX_UNITS; i++) {
+        Piece p = { 0 };
+        g->pieces[i] = p;
+    };
+};
+
 Game create_game() {
     Game g = { 0 };
+    empty_pieces(&g);
     g.active_player = WHITE;
     return g;
 };
@@ -28,17 +36,21 @@ void switch_active_player(Game *g) {
     g->active_player = WHITE;
 };
 
-Location get_location_for_piece(Game *g, Piece *p) {
+void get_location_for_piece(Game *g, Piece *p, Location *l) {
     for (int x = 0; x < BOARD_WIDTH; x++) {
         for (int y = 0; y < BOARD_HEIGHT; y++) {
             if (g->board[x][y] == p) {
-                Location found = { .x = x, .y = y, .valid = true };
-                return found;
+                l->x = x;
+                l->y = y;
+                l->valid = true;
+                return;
             };
         };
     };
-    Location l = { .x = -1, .y = -1, .valid = false };
-    return l;
+
+    l->x = -1;
+    l->y = -1;
+    l->valid = false;
 };
 
 Piece *create_piece_at(Game *g, UnitColor c, UnitType u, Location loc) {
@@ -64,13 +76,32 @@ bool is_first_turn(Piece *p) {
     return true;
 };
 
-bool is_valid_pawn_move(Piece *p, int sx, int sy, int dx, int dy) {
+bool is_valid_pawn_move(Game *g, Piece *p, int sx, int sy, int dx, int dy) {
     if (abs(sx - dx) > 1) {
         return false;
     };
 
+    // Attacking
+    if (abs(sx - dx) == 1) {
+        if (abs(sy - dy) == 1) {
+            Location l = { dx, dy, true };
+            Piece *b = get_piece_at(g, l);
+            if (b) {
+                if (p->color != b->color) {
+                    return true;
+                };
+            };
+        };
+    };
+
     int try_y = abs(sy - dy);
-    if (try_y > 1) {
+    if (try_y >= 1) {
+        Location l = { dx, dy, true };
+        Piece *b = get_piece_at(g, l);
+        // If another piece is at the destination, don't move there
+        if (b) {
+            return false;
+        };
         if (try_y == 2) {
             if (is_first_turn(p) == false) {
                 return false;
@@ -153,7 +184,7 @@ bool is_valid_queen_move(int sx, int sy, int dx, int dy) {
     return true;
 };
 
-bool is_valid_king_move(int sx, int sy, int dx, int dy) {
+bool is_valid_king_move(Game *g, int sx, int sy, int dx, int dy) {
     int abs_x = abs(sx - dx);
     int abs_y = abs(sy - dy);
 
@@ -163,6 +194,20 @@ bool is_valid_king_move(int sx, int sy, int dx, int dy) {
     if (abs_y > 1) {
         return false;
     };
+
+    for (int i = 0; i < MAX_UNITS; i++) {
+        Piece *p = &g->pieces[i];
+
+        if (p->color != get_active_player(g)) {
+            if (p->unittype == ROOK) {
+                Location l = { 0 };
+                get_location_for_piece(g, p, &l);
+                if (is_valid_rook_move(l.x, l.y, dx, dy)) {
+                    return false;
+                }
+            }
+        }
+    }
 
     return true;
 };
@@ -310,7 +355,7 @@ bool is_valid_move(Game *g, Piece *p, Location src, Location dest) {
     }
 
     if (p->unittype == PAWN) {
-        bool v = is_valid_pawn_move(p, src.x, src.y, dest.x, dest.y);
+        bool v = is_valid_pawn_move(g, p, src.x, src.y, dest.x, dest.y);
         if (v != true) {
             return false;
         };
@@ -365,7 +410,7 @@ bool is_valid_move(Game *g, Piece *p, Location src, Location dest) {
     };
 
     if (p->unittype == KING) {
-        bool v = is_valid_king_move(src.x, src.y, dest.x, dest.y);
+        bool v = is_valid_king_move(g, src.x, src.y, dest.x, dest.y);
         if (v != true) {
             return false;
         };
@@ -375,7 +420,8 @@ bool is_valid_move(Game *g, Piece *p, Location src, Location dest) {
 };
 
 bool move_piece(Game *g, Piece *p, Location target) {
-    Location src = get_location_for_piece(g, p);
+    Location src = { 0 };
+    get_location_for_piece(g, p, &src);
     if (src.valid == false) {
         return false;
     };
@@ -390,7 +436,6 @@ bool move_piece(Game *g, Piece *p, Location target) {
         return false;
     };
 
-    // Piece *target_piece = g->board[target.x][target.y];
     Piece *target_piece = g->board[target.x][target.y];
     if (target_piece != NULL) {
         if (target_piece->color == current_player_color) {

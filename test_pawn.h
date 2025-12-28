@@ -62,11 +62,38 @@ static int test_cannot_move_a_pawn_horizontally_two_squares() {
     return 0;
 };
 
+static int test_pawn_cannot_attack_forward() {
+    Game g = create_game();
+    Location loc = { 0, 0, true };
+    Piece *a = create_piece_at(&g, WHITE, PAWN, loc);
+    Location targetloc = { 0, 1, true };
+    create_piece_at(&g, BLACK, PAWN, targetloc);
+
+    int success = move_piece(&g, a, targetloc);
+    ASSERT(success == false, "Pawn cannot attack forward");
+    return 0;
+};
+
+static int test_pawn_can_attack_diagonally() {
+    Game g = create_game();
+    Location loc = { 0, 0, true };
+    Piece *a = create_piece_at(&g, WHITE, PAWN, loc);
+
+    Location targetloc = { 1, 1, true };
+    create_piece_at(&g, BLACK, PAWN, targetloc);
+
+    int success = move_piece(&g, a, targetloc);
+    ASSERT(success == true, "Pawn can attack diagonally");
+    return 0;
+};
+
 static int test_pawn_movement() {
     test_can_move_a_pawn_forward_one_square();
     test_can_move_a_pawn_backward_one_square();
     test_can_move_a_pawn_forward_two_squares_on_first_turn();
     test_cannot_move_a_pawn_forward_two_squares_after_first_turn();
     test_cannot_move_a_pawn_horizontally_two_squares();
+    test_pawn_cannot_attack_forward();
+    test_pawn_can_attack_diagonally();
     return 0;
 };

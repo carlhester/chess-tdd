@@ -363,7 +363,6 @@ static int test_black_turn_is_after_white_turn() {
     move_piece(&g, a, targetloc);
 
     UnitColor c = get_active_player(&g);
-
     ASSERT(c == BLACK, "after white turn is black turn");
 
     return 0;
@@ -385,7 +384,7 @@ static int test_white_turn_after_black_turn() {
 
     UnitColor c = get_active_player(&g);
 
-    ASSERT(c == WHITE, "after white turn is black turn");
+    ASSERT(c == WHITE, "after black turn is white turn");
 
     return 0;
 };
@@ -412,7 +411,7 @@ static void run_all_tests() {
     // ===== CONTROL TEST =====
     test_add();
 
-    //===== GAME INITIALIZATION =====
+    // ===== GAME INITIALIZATION =====
     test_create_game();
     test_new_game_has_no_pieces();
 
@@ -441,22 +440,12 @@ static void run_all_tests() {
     test_cannot_move_a_piece_outside_of_board_height();
     test_cannot_move_a_piece_outside_of_board_height_less_than_zero();
 
-    // PAWN MOVEMENT
+    // ==== UNIT SPECIFIC MOVEMENT =====
     test_pawn_movement();
-
-    // KNIGHT MOVEMENT
     test_knight_movement();
-
-    // ROOK MOVEMENT
     test_rook_movement();
-
-    // BISHOP MOVEMENT
     test_bishop_movement();
-
-    // QUEEN MOVEMENT
     test_queen_movement();
-
-    // KING MOVEMENT
     test_king_movement();
 
     // ====== RULE CHECKS =====

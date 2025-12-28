@@ -1,7 +1,7 @@
 #pragma once
 #include <stdbool.h>
 
-#define MAX_UNITS 10
+#define MAX_UNITS 32
 #define BOARD_WIDTH 8
 #define BOARD_HEIGHT 8
 
@@ -44,7 +44,7 @@ Game create_game();
 Piece *get_piece_at(Game *, Location);
 Piece *create_piece_at(Game *, UnitColor, UnitType, Location);
 bool move_piece(Game *, Piece *, Location);
-Location get_location_for_piece(Game *, Piece *);
+void get_location_for_piece(Game *, Piece *, Location *);
 UnitColor get_active_player(Game *);
 void create_standard_setup(Game *);
 bool player_move(Game *, Location, Location);
