@@ -118,6 +118,6 @@ static int test_king_movement() {
     test_cannot_move_a_king_more_than_1_space_vertically();
     test_cannot_move_a_king_more_than_1_space_diagonally();
     test_king_cannot_move_into_rook_check();
-    // test_king_cannot_move_into_bishop_check();
+    test_king_cannot_move_into_bishop_check();
     return 0;
 };
