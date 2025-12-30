@@ -417,22 +417,6 @@ static int test_game_can_add_a_move_to_queue() {
     return 0;
 };
 
-static int test_game_can_get_a_move_from_queue() {
-    Game g = create_game();
-    Location start = { 0, 0, true };
-    Location end = { 6, 6, true };
-    Piece *w = create_piece_at(&g, WHITE, QUEEN, start);
-    Move m = { .piece = w, .location = end };
-
-    bool add = add_move_to_queue(&g, m);
-    ASSERT(add == true, "added should be true");
-    Move res = get_move_from_queue(&g);
-
-    ASSERT(res.location.x == end.x, "Can get a move from the queue - x");
-    ASSERT(res.location.y == end.y, "Can get a move from the queue - y");
-    return 0;
-};
-
 static int test_game_can_process_moves_queue() {
     Game g = create_game();
     Location start = { 0, 0, true };
@@ -441,11 +425,43 @@ static int test_game_can_process_moves_queue() {
     Move m = { .piece = w, .location = end };
 
     add_move_to_queue(&g, m);
-    get_move_from_queue(&g);
     process_moves(&g);
     Piece *res = get_piece_at(&g, end);
     ASSERT(res != NULL, "got piece was null");
     ASSERT(res->unittype = QUEEN, "expected a queen to be at this location");
+    return 0;
+};
+
+static int test_game_can_process_multiple_moves_from_queue() {
+    Game g = create_game();
+    Location w_start = { 0, 0, true };
+    Piece *w = create_piece_at(&g, WHITE, QUEEN, w_start);
+
+    Location w_move1 = { 1, 0, true };
+    Move w_m1 = { .piece = w, .location = w_move1 };
+
+    Location w_move2 = { 1, 1, true };
+    Move w_m2 = { .piece = w, .location = w_move2 };
+
+    Location b_start = { 7, 7, true };
+    Piece *b = create_piece_at(&g, BLACK, QUEEN, b_start);
+
+    Location b_move1 = { 7, 6, true };
+    Move b_m1 = { .piece = b, .location = b_move1 };
+
+    Location b_move2 = { 7, 5, true };
+    Move b_m2 = { .piece = b, .location = b_move2 };
+
+    add_move_to_queue(&g, w_m1);
+    add_move_to_queue(&g, b_m1);
+    add_move_to_queue(&g, w_m2);
+    add_move_to_queue(&g, b_m2);
+    process_moves(&g);
+
+    Piece *p = get_piece_at(&g, b_move2);
+    ASSERT(p != NULL, "p should be populated");
+    ASSERT(p->color == BLACK, "Expected black piece here");
+
     return 0;
 };
 
@@ -501,8 +517,8 @@ static void run_all_tests() {
 
     // ===== GAMEPLAY =====
     test_game_can_add_a_move_to_queue();
-    test_game_can_get_a_move_from_queue();
     test_game_can_process_moves_queue();
+    test_game_can_process_multiple_moves_from_queue();
 
     printf("\n================\n");
     printf("Tests run: %d\n", tests_run);

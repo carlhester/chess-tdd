@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int moves_write_index = 0;
+int moves_read_index = 0;
+
 int add(int a, int b) {
     return a + b;
 };
@@ -557,16 +560,17 @@ bool player_move(Game *g, Location start, Location end) {
 };
 
 bool add_move_to_queue(Game *g, Move m) {
-    g->moveQueue[0] = m;
+    g->moveQueue[moves_write_index] = m;
+    moves_write_index++;
     return true;
 };
 
-Move get_move_from_queue(Game *g) {
-    return g->moveQueue[0];
-};
-
 bool process_moves(Game *g) {
-    move_piece(g, g->moveQueue[0].piece, g->moveQueue[0].location);
+    for (int i = moves_read_index; i < MAX_MOVES; i++) {
+        if (g->moveQueue[i].piece != NULL) {
+            move_piece(g, g->moveQueue[i].piece, g->moveQueue[i].location);
+        };
+    };
 
     return true;
 };

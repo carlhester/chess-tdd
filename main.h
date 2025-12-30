@@ -2,8 +2,10 @@
 #include <stdbool.h>
 
 #define MAX_UNITS 32
+#define MAX_MOVES 100
 #define BOARD_WIDTH 8
 #define BOARD_HEIGHT 8
+
 
 typedef struct {
     int x;
@@ -48,7 +50,6 @@ int add(int, int);
 Game create_game();
 bool process_moves(Game *);
 bool add_move_to_queue(Game *, Move);
-Move get_move_from_queue(Game *);
 Piece *get_piece_at(Game *, Location);
 Piece *create_piece_at(Game *, UnitColor, UnitType, Location);
 bool move_piece(Game *, Piece *, Location);
