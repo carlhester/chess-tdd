@@ -556,6 +556,20 @@ bool player_move(Game *g, Location start, Location end) {
     return move_piece(g, p, end);
 };
 
+bool add_move_to_queue(Game *g, Move m) {
+    g->moveQueue[0] = m;
+    return true;
+};
+
+Move get_move_from_queue(Game *g) {
+    return g->moveQueue[0];
+};
+
+bool process_moves(Game *g) {
+    move_piece(g, g->moveQueue[0].piece, g->moveQueue[0].location);
+
+    return true;
+};
 // int main() {
 //     Game g = create_game();
 //     create_standard_board(&g);

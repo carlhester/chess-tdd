@@ -403,8 +403,49 @@ static int test_attacking_other_color_captures_piece() {
     ASSERT(result == w, "the result should be the white piece at location bloc");
     return 0;
 };
-static int test_on_game_start_white_player_can_enter_a_move() {
 
+static int test_game_can_add_a_move_to_queue() {
+    Game g = create_game();
+    Location start = { 0, 0, true };
+    Location end = { 6, 6, true };
+    Piece *w = create_piece_at(&g, WHITE, QUEEN, start);
+
+    Move m = { .piece = w, .location = end };
+
+    bool res = add_move_to_queue(&g, m);
+    ASSERT(res = true, "Can add a move to queue");
+    return 0;
+};
+
+static int test_game_can_get_a_move_from_queue() {
+    Game g = create_game();
+    Location start = { 0, 0, true };
+    Location end = { 6, 6, true };
+    Piece *w = create_piece_at(&g, WHITE, QUEEN, start);
+    Move m = { .piece = w, .location = end };
+
+    bool add = add_move_to_queue(&g, m);
+    ASSERT(add == true, "added should be true");
+    Move res = get_move_from_queue(&g);
+
+    ASSERT(res.location.x == end.x, "Can get a move from the queue - x");
+    ASSERT(res.location.y == end.y, "Can get a move from the queue - y");
+    return 0;
+};
+
+static int test_game_can_process_moves_queue() {
+    Game g = create_game();
+    Location start = { 0, 0, true };
+    Location end = { 6, 6, true };
+    Piece *w = create_piece_at(&g, WHITE, QUEEN, start);
+    Move m = { .piece = w, .location = end };
+
+    add_move_to_queue(&g, m);
+    get_move_from_queue(&g);
+    process_moves(&g);
+    Piece *res = get_piece_at(&g, end);
+    ASSERT(res != NULL, "got piece was null");
+    ASSERT(res->unittype = QUEEN, "expected a queen to be at this location");
     return 0;
 };
 
@@ -459,7 +500,9 @@ static void run_all_tests() {
     test_attacking_other_color_captures_piece();
 
     // ===== GAMEPLAY =====
-    test_on_game_start_white_player_can_enter_a_move();
+    test_game_can_add_a_move_to_queue();
+    test_game_can_get_a_move_from_queue();
+    test_game_can_process_moves_queue();
 
     printf("\n================\n");
     printf("Tests run: %d\n", tests_run);

@@ -32,15 +32,23 @@ typedef struct {
 } Piece;
 
 typedef struct {
+    Piece *piece;
+    Location location;
+} Move;
+
+typedef struct {
     Piece *board[BOARD_WIDTH][BOARD_HEIGHT];
     Piece pieces[MAX_UNITS];
     UnitColor active_player;
+    Move moveQueue[100];
     int piece_count;
 } Game;
 
 int add(int, int);
 Game create_game();
-
+bool process_moves(Game *);
+bool add_move_to_queue(Game *, Move);
+Move get_move_from_queue(Game *);
 Piece *get_piece_at(Game *, Location);
 Piece *create_piece_at(Game *, UnitColor, UnitType, Location);
 bool move_piece(Game *, Piece *, Location);
