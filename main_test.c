@@ -1,4 +1,4 @@
-#include "main.h"
+#include "game.h"
 #include "test_assert.h"
 #include "test_bishop.h"
 #include "test_king.h"
@@ -171,6 +171,12 @@ static int test_can_populate_board_standard_setup() {
         Piece *p = get_piece_at(&g, loc);
         ASSERT(p != NULL, "Expected a piece at x,7");
     }
+    return 0;
+};
+
+static int test_can_get_representative_letter() {
+    char res = get_piece_letter(KING);
+    ASSERT(res == 'K', "expected K for King");
     return 0;
 };
 
@@ -485,6 +491,7 @@ static void run_all_tests() {
     test_can_add_a_BLACK_QUEEN_to_5_0();
     test_cannot_create_a_piece_where_one_already_exists();
     test_can_populate_board_standard_setup();
+    test_can_get_representative_letter();
 
     // ===== MOVEMENT =====
     test_cannot_move_a_piece_on_top_of_the_same_color();

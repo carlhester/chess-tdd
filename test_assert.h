@@ -1,5 +1,5 @@
 #pragma once
-#include "main.h"
+#include "game.h"
 #include <stdio.h>
 
 extern int tests_run;

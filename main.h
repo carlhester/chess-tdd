@@ -6,6 +6,11 @@
 #define BOARD_WIDTH 8
 #define BOARD_HEIGHT 8
 
+#define ANSI_RESET "\033[0m"
+#define ANSI_BLACK "\033[30m"
+#define ANSI_RED "\033[31m"
+#define ANSI_WHITE "\033[37m"
+#define ANSI_CYAN "\033[36m"
 
 typedef struct {
     int x;
@@ -57,3 +62,4 @@ void get_location_for_piece(Game *, Piece *, Location *);
 UnitColor get_active_player(Game *);
 void create_standard_setup(Game *);
 bool player_move(Game *, Location, Location);
+char get_piece_letter(UnitType);

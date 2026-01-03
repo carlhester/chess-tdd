@@ -4,23 +4,23 @@ CFLAGS = -Wall -Wextra -std=c99
 # Targets
 all: app
 
-app: main.c main.h
-	$(CC) $(CFLAGS) -o app main.c
+app: main.c game.c game.h
+	$(CC) $(CFLAGS) -o app main.c game.c
 
 test:
-	$(CC) $(CFLAGS) -DTESTING -o main_test main_test.c main.c
+	$(CC) $(CFLAGS) -DTESTING -o main_test main_test.c game.c
 	./main_test
 
-main_test: main_test.c main.c main.h
-	$(CC) $(CFLAGS) -DTESTING -o main_test main_test.c main.c
+main_test: main_test.c game.c game.h
+	$(CC) $(CFLAGS) -DTESTING -o main_test main_test.c game.c
 
-coverage: main_test.c main.c main.h
-	$(CC) $(CFLAGS) -DTESTING --coverage -o main_test main_test.c main.c
+coverage: main_test.c game.c game.h
+	$(CC) $(CFLAGS) -DTESTING --coverage -o main_test main_test.c game.c
 	./main_test
-	gcov main.c
+	gcov game.c
 
 check-warnings:
-	$(CC) $(CFLAGS) -Werror -DTESTING -fsyntax-only main_test.c main.c
+	$(CC) $(CFLAGS) -Werror -DTESTING -fsyntax-only main_test.c game.c
 
 clean:
 	rm -f main_test app *.gcda *.gcno *.gcov

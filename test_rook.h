@@ -1,4 +1,4 @@
-#include "main.h"
+#include "game.h"
 #include "test_assert.h"
 #include <stdbool.h>
 #include <stdio.h>
