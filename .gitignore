@@ -1,4 +1,6 @@
 main
 app
 main_test
+game_test
 .claude 
+.cache

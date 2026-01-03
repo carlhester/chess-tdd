@@ -63,3 +63,4 @@ UnitColor get_active_player(Game *);
 void create_standard_setup(Game *);
 bool player_move(Game *, Location, Location);
 char get_piece_letter(UnitType);
+void draw(Game *);

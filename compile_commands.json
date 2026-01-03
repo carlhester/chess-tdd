@@ -1,0 +1,12 @@
+[
+  {
+    "directory": "/Users/ch/workspace/learn-c/chess-tdd",
+    "command": "gcc -Wall -Wextra -std=c99 -c main.c",
+    "file": "main.c"
+  },
+  {
+    "directory": "/Users/ch/workspace/learn-c/chess-tdd",
+    "command": "gcc -Wall -Wextra -std=c99 -DTESTING -c game_test.c",
+    "file": "game_test.c"
+  }
+]
