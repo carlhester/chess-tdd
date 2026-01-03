@@ -4,6 +4,7 @@ A simple exercise to practice tdd while learning C
 
 ## Example
 
+```
 % ./app
 ----------
 |rkbQKbkr|
@@ -15,3 +16,4 @@ A simple exercise to practice tdd while learning C
 |pppp.ppp|
 |rkbQKbkr|
 ----------
+```
